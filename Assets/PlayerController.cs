@@ -18,8 +18,9 @@ public class PlayerController : MonoBehaviour
         renderer = GetComponent<SpriteRenderer>();
     }
 
+  
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         if(Input.GetKey(KeyCode.D))
         {
@@ -41,11 +42,15 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("idle", true);
             animator.SetBool("run", false);
         }
+        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f);
+
         if (Input.GetKeyDown(KeyCode.W))
         {
-            isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f);
             if (isGrounded)
-                rb.AddForce(Vector2.up * Time.deltaTime * jumpForce, ForceMode2D.Impulse);
+            {
+                //rb.AddForce(Vector2.up * Time.deltaTime * jumpForce, ForceMode2D.Impulse);
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -56,8 +61,22 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("run", false);
             animator.SetTrigger("attack");
         }
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f);
+        if(rb.velocity.x > 2.0f) rb.velocity.Set(2.0f, rb.velocity.y);
+        if(rb.velocity.x < -2.0f) rb.velocity.Set(-2.0f, rb.velocity.y);
+    }
+    public void Attack()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 1f);
+        if (hit && hit.collider.GetComponent<EnemyController>())
+            hit.collider.GetComponent<EnemyController>().Die();
+    }
 
-        Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - 1f), Color.green);
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.name.StartsWith("h"))
+        {
+            CanvasController.instance.CollectHeart();
+            Destroy(collision.gameObject);
+        }
     }
 }

@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
         renderer = GetComponent<SpriteRenderer>();
     }
 
-  
+
     // Update is called once per frame
     public void Update()
     {

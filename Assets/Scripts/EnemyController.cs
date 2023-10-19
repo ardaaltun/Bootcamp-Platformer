@@ -9,6 +9,9 @@ public class EnemyController : MonoBehaviour
     SpriteRenderer renderer;
     public GameObject heart, key;
     public bool isRedEnemy;
+
+    public AudioClip death;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -19,6 +22,7 @@ public class EnemyController : MonoBehaviour
     public void Die()
     {
         animator.SetTrigger("death");
+        GameController.instance.PlayAudio(death);
         GetComponent<BoxCollider2D>().enabled = false;
         transform.position = new Vector3(transform.position.x, transform.position.y - 0.25f, transform.position.z);
         if(isRedEnemy)

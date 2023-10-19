@@ -11,7 +11,10 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     SpriteRenderer renderer;
     public bool isGrounded;
+    public LayerMask mask;
     Vector2 oldPos;
+
+    public AudioClip jumpSFX;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +28,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        if(Input.GetKey(KeyCode.D))
+
+        if (Input.GetKey(KeyCode.D))
         {
             renderer.flipX = false;
             rb.velocity = new Vector2(speed * Time.deltaTime, rb.velocity.y);
@@ -45,7 +49,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("idle", true);
             animator.SetBool("run", false);
         }
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f);
+        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f, mask);
 
         if (Input.GetKeyDown(KeyCode.W))
         {
@@ -59,14 +63,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
-            
+            GameController.instance.PlayAudio(jumpSFX);
             animator.SetBool("idle", false);
             animator.SetBool("run", false);
             animator.SetTrigger("attack");
         }
-        if(rb.velocity.x > 2.0f) rb.velocity.Set(2.0f, rb.velocity.y);
-        if(rb.velocity.x < -2.0f) rb.velocity.Set(-2.0f, rb.velocity.y);
+        if (rb.velocity.x > 2.0f) rb.velocity.Set(2.0f, rb.velocity.y);
+        if (rb.velocity.x < -2.0f) rb.velocity.Set(-2.0f, rb.velocity.y);
+
     }
+
+
+
     public void Attack()
     {
         Vector3 attackDirection;
@@ -75,7 +83,7 @@ public class PlayerController : MonoBehaviour
         else
             attackDirection = Vector3.right;  //attack right
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, attackDirection, 1f);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, attackDirection, 1f, mask);
         if (hit && hit.collider.GetComponent<EnemyController>())
             hit.collider.GetComponent<EnemyController>().Die();
     }

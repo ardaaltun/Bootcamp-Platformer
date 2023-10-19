@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public GameObject level2;
     public int heartPieceCount;
     public int keyPieceCount;
+    public AudioSource src;
 
     [Header("UI")]
     public Image heart;
@@ -94,5 +95,10 @@ public class GameController : MonoBehaviour
         Destroy(pc.GetComponent<Rigidbody2D>());
         pc.enabled = false;
 
+    }
+
+    public void PlayAudio(AudioClip clip)
+    {
+        src.PlayOneShot(clip);
     }
 }
